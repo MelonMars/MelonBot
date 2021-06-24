@@ -1,5 +1,4 @@
 import discord, wikipedia, requests, random, json
-from discord.ext import commands
 from bs4 import BeautifulSoup as bs
 from dadjokes import Dadjoke
 from mtgsdk import Card
@@ -25,11 +24,11 @@ def usernameToUUID(uname):
     return(res.text)
 
 def getHypixelStats(uuid):
-    res = requests.get("https://api.hypixel.net/player?key=INPUTKEYHERE&uuid={}".format(uuid))
+    res = requests.get("https://api.hypixel.net/player?key=APIKEY&uuid={}".format(uuid))
     return res.json()
 
 
-TOKEN = "INPUTTOKENHERE"
+TOKEN = "TOKEN"
 client = discord.Client()
 
 @client.event
@@ -125,7 +124,7 @@ async def on_message(message):
         month = random.randint(1, 12)
         day = random.randint(1, 29)
         date = "{}-{}-{}".format(year, month, day)
-        r = requests.get("https://api.nasa.gov/planetary/apod?api_key=dIWbk4YjYaKypZIJs1Tjwuc3r0G0aYEKY1hLCiDn&date={}".format(date))
+        r = requests.get("https://api.nasa.gov/planetary/apod?api_key=APIKEY&date={}".format(date))
         data = json.dumps(r.json())
         data2 = json.loads(data)
         result = "\n{}: \n{}. \nThe image is found here: \n{}".format(data2["title"], data2["explanation"], data2["url"])
@@ -148,12 +147,12 @@ async def on_message(message):
         player = msg[1]
         url = 'https://api.fortnitetracker.com/v1/profile/{}'.format(player)
         headers = {
-            'TRN-Api-Key' : '3b6bd0d3-c434-4264-a784-7c6f452b65a0'
+            'TRN-Api-Key' : 'API KEY'
         }
 
         response = requests.get(url, headers=headers)
 
         json = response.json()
-       # print("{} has a k/d of {}, a Win Ratio of {}, has played {} matches, for {} minutes, has an average kills per match of {}")
+        await message.channel.send("{} has a k/d of {}, a Win Ratio of {}, has played {} matches, for {} minutes, has an average kills per match of {}")
 
 client.run(TOKEN)
