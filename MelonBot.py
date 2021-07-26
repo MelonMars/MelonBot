@@ -1,7 +1,14 @@
 import discord, wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
-from dadjokes import Dadjoke
 from mtgsdk import Card
+
+
+with open('D:\MelonBot\config.json', 'r') as config:
+    global fortniteKey, Token, hypixelKey, nasaKey
+    config_json = json.load(config)
+    Token = config_json["Token"][0]
+    hypixelKey = config_json["Hypixel-Api-Key"][0]
+    nasaKey = config_json["Nasa-Api-Key"][0]
 
 def coolWikis():
     res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
@@ -24,11 +31,10 @@ def usernameToUUID(uname):
     return(res.text)
 
 def getHypixelStats(uuid):
-    res = requests.get("https://api.hypixel.net/player?key=APIKEY&uuid={}".format(uuid))
+    res = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hypixelKey, uuid))
     return res.json()
 
 
-TOKEN = "TOKEN"
 client = discord.Client()
 
 @client.event
@@ -54,14 +60,15 @@ async def on_message(message):
         await message.channel.send(data)
         
     if message.content.startswith(';bedwars'):
+        import json
         try:
             usersMessage = str(message.content)
             usersMessage = usersMessage.split(" ")
             uuid = usernameToUUID(usersMessage[1])
             uuid = json.loads(uuid)
             uuid = uuid["id"]
-        except:
-            uuid = "none"
+        except Exception as e:
+            print(e)
             
         statsRaw = getHypixelStats(uuid)
         try:
@@ -74,10 +81,12 @@ async def on_message(message):
             wnlRatio = playerWins/playerLosses
         
             await message.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(usersMessage[1], playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
-        except:
-            await message.channel.send("That is not a valid username")
+        except Exception as e:
+           # await message.channel.send("That is not a valid username")
+           print(e)
 
     if message.content.startswith(';skywars'):
+        import json
         try:
             usersMessage = str(message.content)
             usersMessage = usersMessage.split(" ")
@@ -120,13 +129,13 @@ async def on_message(message):
         await message.channel.send(result)
 
     if message.content.startswith(';nasa'):
+        import json
         year = random.randint(1996, 2020)
         month = random.randint(1, 12)
         day = random.randint(1, 29)
         date = "{}-{}-{}".format(year, month, day)
-        r = requests.get("https://api.nasa.gov/planetary/apod?api_key=APIKEY&date={}".format(date))
-        data = json.dumps(r.json())
-        data2 = json.loads(data)
+        r = requests.get("https://api.nasa.gov/planetary/apod?api_key={}&date={}".format(nasaKey, date))
+        data2 = r.json()
         result = "\n{}: \n{}. \nThe image is found here: \n{}".format(data2["title"], data2["explanation"], data2["url"])
         await message.channel.send(result)
 
@@ -140,19 +149,10 @@ async def on_message(message):
 
     if message.content.startswith(';id'):
         await message.channel.send(f"Your discord user id is {message.author.id}")
-    
-    if message.content.startswith(';fortnite'):
-        msg = message.content
-        msg = msg.split(' ')
-        player = msg[1]
-        url = 'https://api.fortnitetracker.com/v1/profile/{}'.format(player)
-        headers = {
-            'TRN-Api-Key' : 'API KEY'
-        }
 
-        response = requests.get(url, headers=headers)
+    if message.content.startswith(';airplane'):
+        content = message.content.split(' ')
+        url = f'https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?NameFilter={content[1]}'
+        
 
-        json = response.json()
-        await message.channel.send("{} has a k/d of {}, a Win Ratio of {}, has played {} matches, for {} minutes, has an average kills per match of {}")
-
-client.run(TOKEN)
+client.run(Token)
