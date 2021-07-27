@@ -1,28 +1,25 @@
-import discord, wikipedia, requests, random, json
+from discord.ext import commands
+import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
+from discord import Color as c
+from discord import Embed
 
 
-with open('D:\MelonBot\config.json', 'r') as config:
-    global fortniteKey, Token, hypixelKey, nasaKey
-    config_json = json.load(config)
-    Token = config_json["Token"][0]
-    hypixelKey = config_json["Hypixel-Api-Key"][0]
-    nasaKey = config_json["Nasa-Api-Key"][0]
+bot = commands.Bot(command_prefix=';')
 
 def coolWikis():
     res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
     soup = bs(res.text, "html.parser")
     wikisList = []
     global badList
-    badList = ["Kuso_Miso_Technique", "MILF_pornography", "Forest_swastika", "National_Rifle_Association", "Sex_position"]
     for link in soup.find_all("a"):
         url = link.get("href", "")
         if "/wiki/" in url:
             wikisList.append(url)
 
     toSend = wikisList[random.randint(0, len(wikisList))]
-    if toSend in badList:
+    if toSend.contains('porn') or toSend.contains('sex') or toSend.contains('Fuck') or toSend.contains('swastika'):
         toSend = "Sorry, but the article the random number generator landed on... is not the most appropriate."
     return toSend
 
@@ -34,85 +31,184 @@ def getHypixelStats(uuid):
     res = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hypixelKey, uuid))
     return res.json()
 
-
-client = discord.Client()
-
-@client.event
+@bot.event
 async def on_ready():
-    print('logged in as {0.user}'.format(client))
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith(';cool wikis'):
-        x = coolWikis()
-        await message.channel.send("https://en.wikipedia.org/"+x)
+
+@bot.command()
+async def wiki(ctx, page):
+    try:
+        data = wikipedia.WikipediaPage(title = page).summary
+    except Exception as e:
+        data = str(e)
+    data = data[0:2000]
+    await ctx.channel.send(data)
+
+@bot.command()
+async def dadjoke(ctx):
+    res = requests.get("https://www.icanhazdadjoke.com/slack")
+    await ctx.channel.send(res.json()["attachments"][0]["fallback"])
+
+@bot.command()
+async def nasa(ctx):
+        year = random.randint(1996, 2020)
+        month = random.randint(1, 12)
+        day = random.randint(1, 29)
+        date = "{}-{}-{}".format(year, month, day)
+        r = requests.get("https://api.nasa.gov/planetary/apod?api_key={}&date={}".format(nasaKey, date))
+        data2 = r.json()
+        result = "\n{}: \n{}. \nThe image is found here: \n{}".format(data2["title"], data2["explanation"], data2["url"])
+        await ctx.channel.send(result)
+
+@bot.command()
+async def id(ctx):
+    await ctx.channel.send(f"Your user id is: {ctx.author.id}")
+
+@bot.command()
+async def programmingjoke(ctx):
+    url = "https://official-joke-api.appspot.com/jokes/programming/random"
+    res = requests.get(url)
+    data = dict(res.json()[0])
+    await ctx.channel.send(data["setup"]+data["punchline"])
+
+@bot.command()
+async def generaljoke(ctx):
+        url = "https://official-joke-api.appspot.com/jokes/general/random"
+        res = requests.get(url)
+        data = dict(res.json()[0])
+        await ctx.channel.send(data["setup"]+data["punchline"])
+
+@bot.command()
+async def shibu(ctx):
+    url = "http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true"
+    res = requests.get(url)
+    await ctx.channel.send(res.json()[0])
+
+@bot.command()
+async def fox(ctx):
+    url = "https://randomfox.ca/floof/"
+    res = requests.get(url)
+    await ctx.channel.send(res.json()["image"])
+
+@bot.command()
+async def cat(ctx):
+    url = "https://randomfox.ca/floof/"
+    res = requests.get(url)
+    await ctx.channel.send(res.json()["image"])
+
+@bot.command()
+async def food(ctx): 
+        url = "https://foodish-api.herokuapp.com/api"
+        res = requests.get(url)
+        await ctx.channel.send(res.json()["image"])
+
+@bot.command()
+async def author(ctx, *author: str):
+        #https://openlibrary.org/search/authors.json?q=
+        msglist = str(author).split(' ')
+        msglist = msglist[1:]
+        upname = str(msglist).replace(']', '').replace('[', '').replace(' ', '%20').replace(',', '').replace('\'', '')
+        res = requests.get(f"https://openlibrary.org/search/authors.json?q={upname}")
+        data = res.json()["docs"]
+        data = list(data)[0]
+        data = dict(data)
+       # await message.channel.send(data["name"])
+        em= Embed(title=data["name"], color=c.red())
+        em.add_field(name="Birth", value=data["birth_date"], inline=True)
+        em.add_field(name="Death", value=data["death_date"], inline=True)
+        em.add_field(name="Top Work", value=data["top_work"], inline=True)
+        await ctx.channel.send(embed=em)
+
+@bot.command()
+async def freegame(ctx):
+    id = random.randint(1, 512)
+    res = requests.get(f"https://www.freetogame.com/api/game?id={id}")
+    data = res.json()
+    em = discord.Embed(title=data["title"], url=data["game_url"], description=data["short_description"], )
+    em.add_field(name="Publisher", value=data["publisher"], inline=True)
+    em.add_field(name="Developer", value=data["developer"], inline=True)
+    em.add_field(name="Platform", value=data["platform"], inline=True)
+    em.add_field(name="genre", value=data["genre"], inline=True)
+    em.set_thumbnail(url="https://www.freetogame.com/g/427/thumbnail.jpg")
+    await ctx.channel.send(embed=em)
+
+@bot.command()
+async def tronalddump(ctx):
+    url = "https://www.tronalddump.io/random/quote"
+    res = requests.get(url)
+    await ctx.channel.send("A stupid Trump quote is:" + " " + res.json()["value"])
+
+@bot.command()
+async def insult(ctx):
+    url = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+    res = requests.get(url)
+    await ctx.channel.send(ctx.author.mention + "," + " " + res.json()["insult"])
+
+@bot.command()
+async def quotes(ctx):
+    url = "https://api.quotable.io/random"
+    res = requests.get(url)
+    await ctx.channel.send(res.json()["content"] + '\n' + '-' + res.json()["author"])
+
+@bot.command()
+async def advice(ctx):
+    url = "https://api.adviceslip.com/advice"
+    res = requests.get(url)
+    await ctx.channel.send(res.json()["slip"]["advice"])
+
+@bot.command()
+async def coolwikis(ctx):
+    x = coolWikis()
+    await ctx.channel.send("https://en.wikipedia.org/"+x)
+
+@bot.command()
+async def bedwars(ctx, uname: str):
+    try:
+            uuid = usernameToUUID(uname)
+            uuid = json.loads(uuid)
+            uuid = uuid["id"]
+    except:
+        pass
+    statsRaw = getHypixelStats(uuid)
+    try:
+        playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
+        playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
+        playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
+        playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
+        playerLosses = int(playerGames) - int(playerWins)
+        kd = playerKills/playerDeaths
+        wnlRatio = playerWins/playerLosses
     
-    if message.content.startswith(';wiki'):
-        x = message.content
-        x = x.replace(";wiki ", "")
-        try:
-          data = wikipedia.WikipediaPage(title = x).summary
-        except Exception as e:
-          data = str(e)
-        data = data[0:2000]
-        await message.channel.send(data)
-        
-    if message.content.startswith(';bedwars'):
-        import json
-        try:
-            usersMessage = str(message.content)
-            usersMessage = usersMessage.split(" ")
-            uuid = usernameToUUID(usersMessage[1])
+        await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
+    except Exception as e:
+        await ctx.channel.send("That is not a valid username")
+        print(e)
+
+@bot.command()
+async def hypixel(ctx, uname: str):
+    try:
+            uuid = usernameToUUID(uname)
             uuid = json.loads(uuid)
             uuid = uuid["id"]
-        except Exception as e:
-            print(e)
-            
-        statsRaw = getHypixelStats(uuid)
-        try:
-            playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
-            playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
-            playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
-            playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
-            playerLosses = int(playerGames) - int(playerWins)
-            kd = playerKills/playerDeaths
-            wnlRatio = playerWins/playerLosses
-        
-            await message.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(usersMessage[1], playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
-        except Exception as e:
-           # await message.channel.send("That is not a valid username")
-           print(e)
+    except:
+        uuid = "none"
+    
+    statsRaw = getHypixelStats(uuid)
+    try:
+        playerWins = statsRaw["player"]["stats"]["SkyWars"]["wins"]
+        playerGames = statsRaw["player"]["stats"]["SkyWars"]["games_played_skywars"]
+        playerKills = statsRaw["player"]["stats"]["SkyWars"]["kills"]
+        playerDeaths = playerGames - playerWins
+        kd = playerKills/playerDeaths
+        wnlRatio = playerWins/playerDeaths
+        await ctx.channel.send("{} has {} kills, {} losses, for a k/d of {}, and has {} wins and {} losses, for a wnl ratio of {}".format(uname, playerKills, playerDeaths, kd, playerWins, playerDeaths, wnlRatio))
+    except:
+        await ctx.channel.send("That is not a valid username")
 
-    if message.content.startswith(';skywars'):
-        import json
-        try:
-            usersMessage = str(message.content)
-            usersMessage = usersMessage.split(" ")
-            uuid = usernameToUUID(usersMessage[1])
-            uuid = json.loads(uuid)
-            uuid = uuid["id"]
-        except:
-            uuid = "none"
-        
-        statsRaw = getHypixelStats(uuid)
-        try:
-            playerWins = statsRaw["player"]["stats"]["SkyWars"]["wins"]
-            playerGames = statsRaw["player"]["stats"]["SkyWars"]["games_played_skywars"]
-            playerKills = statsRaw["player"]["stats"]["SkyWars"]["kills"]
-            playerDeaths = playerGames - playerWins
-            kd = playerKills/playerDeaths
-            wnlRatio = playerWins/playerDeaths
-            await message.channel.send("{} has {} kills, {} losses, for a k/d of {}, and has {} wins and {} losses, for a wnl ratio of {}".format(usersMessage[1], playerKills, playerDeaths, kd, playerWins, playerDeaths, wnlRatio))
-        except:
-            await message.channel.send("That is not a valid username")
-
-    if message.content.startswith(';dadjoke'):
-        res = requests.get("https://www.icanhazdadjoke.com/slack")
-        await message.channel.send(res.json()["attachments"][0]["fallback"])
-
-    if message.content.startswith(';magic'):
+@bot.command()
+async def magic(ctx):
         running = True
         while running == True:
             try:
@@ -126,33 +222,21 @@ async def on_message(message):
                 running = False
             except:
                 pass
-        await message.channel.send(result)
+        await ctx.channel.send(result)
 
-    if message.content.startswith(';nasa'):
-        import json
-        year = random.randint(1996, 2020)
-        month = random.randint(1, 12)
-        day = random.randint(1, 29)
-        date = "{}-{}-{}".format(year, month, day)
-        r = requests.get("https://api.nasa.gov/planetary/apod?api_key={}&date={}".format(nasaKey, date))
-        data2 = r.json()
-        result = "\n{}: \n{}. \nThe image is found here: \n{}".format(data2["title"], data2["explanation"], data2["url"])
-        await message.channel.send(result)
+@bot.command()
+async def e(ctx, n: int):
+    #(1 + 1/n)^n
+    beforeMultiply = 1 + 1/int(n)
+    afterMultiply = beforeMultiply**float(n)
+    await ctx.channel.send(afterMultiply)
 
-    if message.content.startswith(';e'):
-        x = message.content.split(' ')
-        n = x[1]
-        #(1 + 1/n)^n
-        beforeMultiply = 1 + 1/int(n)
-        afterMultiply = beforeMultiply**float(n)
-        await message.channel.send(afterMultiply)
 
-    if message.content.startswith(';id'):
-        await message.channel.send(f"Your discord user id is {message.author.id}")
+with open('D:\MelonBot\config.json', 'r') as config:
+    global Token, hypixelKey, nasaKey
+    config_json = json.load(config)
+    Token = config_json["Token"][0]
+    hypixelKey = config_json["Hypixel-Api-Key"][0]
+    nasaKey = config_json["Nasa-Api-Key"][0]
 
-    if message.content.startswith(';airplane'):
-        content = message.content.split(' ')
-        url = f'https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?NameFilter={content[1]}'
-        
-
-client.run(Token)
+bot.run(Token)
