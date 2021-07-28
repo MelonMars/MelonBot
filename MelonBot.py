@@ -1,3 +1,4 @@
+from os import replace
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
@@ -33,12 +34,13 @@ def getHypixelStats(uuid):
 
 @bot.event
 async def on_ready():
+    print('------')
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
 
 
 @bot.command()
-async def wiki(ctx, page):
+async def wiki(ctx, *page: str):
     try:
         data = wikipedia.WikipediaPage(title = page).summary
     except Exception as e:
@@ -230,6 +232,26 @@ async def e(ctx, n: int):
     beforeMultiply = 1 + 1/int(n)
     afterMultiply = beforeMultiply**float(n)
     await ctx.channel.send(afterMultiply)
+
+@bot.command()
+async def affirmation(ctx):
+    res = requests.get("https://www.affirmations.dev/")
+    await ctx.channel.send(res.json()["affirmation"])
+
+@bot.command()
+async def number(ctx):
+    res = requests.get("http://numbersapi.com/random")
+    await ctx.channel.send(res.text)
+
+@bot.command()
+async def iss(ctx):
+    res = requests.get("http://api.open-notify.org/iss-now.json")
+    long = res.json()["iss_position"]["longitude"]
+    lat = res.json()["iss_position"]["latitude"]
+    await ctx.channel.send(f"Lat: {lat} \nLong: {long}")
+
+
+
 
 
 with open('D:\MelonBot\config.json', 'r') as config:
