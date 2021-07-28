@@ -1,4 +1,3 @@
-from os import name, replace
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
