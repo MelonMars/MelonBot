@@ -1,13 +1,14 @@
-from os import replace
+from os import name, replace
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
-from discord import Embed
+from discord import Embed, Game
 
 
-bot = commands.Bot(command_prefix=';')
+bot = commands.Bot(command_prefix='m;')
+bot.remove_command("help")
 
 def coolWikis():
     res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
@@ -36,6 +37,9 @@ def getHypixelStats(uuid):
 async def on_ready():
     print('------')
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
+    await bot.change_presence(activity=Game(name="m;help"))
+    print('Custom Status is working')
     print('------')
 
 
@@ -149,7 +153,7 @@ async def insult(ctx):
     await ctx.channel.send(ctx.author.mention + "," + " " + res.json()["insult"])
 
 @bot.command()
-async def quotes(ctx):
+async def quote(ctx):
     url = "https://api.quotable.io/random"
     res = requests.get(url)
     await ctx.channel.send(res.json()["content"] + '\n' + '-' + res.json()["author"])
@@ -239,8 +243,13 @@ async def affirmation(ctx):
     await ctx.channel.send(res.json()["affirmation"])
 
 @bot.command()
-async def number(ctx):
+async def randomnumber(ctx):
     res = requests.get("http://numbersapi.com/random")
+    await ctx.channel.send(res.text)
+
+@bot.command()
+async def number(ctx, n: int):
+    res = requests.get(f"http://numbersapi.com/{n}")
     await ctx.channel.send(res.text)
 
 @bot.command()
@@ -250,9 +259,52 @@ async def iss(ctx):
     lat = res.json()["iss_position"]["latitude"]
     await ctx.channel.send(f"Lat: {lat} \nLong: {long}")
 
+@bot.command()
+async def help(ctx, type=''):
+    if type == '':
+        em = Embed(title="Melon Bot Help", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="📓wikipedia", value="`;help wikipedia`", inline=True)
+        em.add_field(name="😃miscellaneous", value="`;help misc`", inline=True)
+        em.add_field(name="🎮games", value="`;help games`", inline=True)
+        em.add_field(name="🐻animals", value="`;help animals`", inline=True)
+        em.add_field(name="😜jokes", value="`;help jokes`", inline=True)
+    if type == 'wikipedia':
+        em = Embed(title="Melon Bot Help: Wikipedia", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="cool wikis", value="`;coolwikis`, get the link to a random wiki.", inline=True)
+        em.add_field(name="wikis", value="`;wikis <wiki name>`, search wikipedia for the summary of the wiki you input.", inline=True)
+        await ctx.channel.send(embed=em)
+    if type == 'misc':
+        em = Embed(title="Melon Bot Help: Miscellaneous", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="iss", value="`;iss`, look at the longitude and latitude of the iss.", inline=True)
+        em.add_field(name="randomnumber", value="`;randomnumber`, get an interesting fact related to a random number.", inline=True)
+        em.add_field(name="e", value="`;e <number>`, calculate the number e from a given n using the equation: (1 + 1/n)^n", inline=True)
+        em.add_field(name="id", value="`;id`, get you user id.", inline=True)
+        em.add_field(name="author", value="`;author <author name>`, get some facts about an author.", inline=True)
+        em.add_field(name="insult", value="`;insult`, have the bot insult you.", inline=True)
+        em.add_field(name="affirmation", value="`;affirmation`, get some affirmation, and feel better about yourself <3.", inline=True)
+        em.add_field(name="advice", value="`;advice`, get some good advice about your life.", inline=True)
+        em.add_field(name="nasa", value="`;nasa`, get a beautiful image and information about it from nasa apod.", inline=True)
+        em.add_field(name="quote", value="`;quote`, get a quote.", inline=True)
+        em.add_field(name="food", value="`;food`, get a picture of food.", inline=True)
+    if type == "games":
+        em = Embed(title="Melon Bot Help: Games", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="free games", value="`;freegame`, use this and get some data about a random free game.", inline=True)
+        em.add_field(name="magic", value="`;magic`, get data about a random magic the gathering card.", inline=True)
+        em.add_field(name="bedwars", value="`;bedwars <username>`, get bedwars stats from the user you inputted", inline=True)
+        em.add_field(name="skywars", value="`;skywars <username>`, get skywars stats from the user you inputted")
+    if type == "animals":
+        em = Embed(title="Melon Bot Help: Animals", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="shibu", value="`;shibu`, get a random shibu inu picture.", inline=True)
+        em.add_field(name="fox", value="`;fox`, get a random fox picture.", inline=True)
+        em.add_field(name="cat", value="`;cat`, get a random cat picture.", inline=True)
+    if type == "jokes":
+        em = Embed(title="Melon Bot Help: Jokes", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
+        em.add_field(name="tronalddump", value="`;tronalddump`, get a stupid trump quote", inline=True)
+        em.add_field(name="programming joke", value="`;programmingjoke`, get a random programming joke", inline=True)
+        em.add_field(name="general joke", value="`;generaljoke`, get a random general joke", inline=True)
+        em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
 
-
-
+    await ctx.channel.send(embed=em)
 
 with open('D:\MelonBot\config.json', 'r') as config:
     global Token, hypixelKey, nasaKey
