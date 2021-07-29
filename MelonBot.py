@@ -1,9 +1,12 @@
+from posix import EX_CONFIG, WIFEXITED
+from sys import setswitchinterval
+from warnings import resetwarnings
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
-from discord import Embed, Game
+from discord import Embed, Game, utils
 
 
 bot = commands.Bot(command_prefix=';')
@@ -307,6 +310,7 @@ async def help(ctx, type=''):
 
     await ctx.channel.send(embed=em)
 
+
 with open('D:\MelonBot\config.json', 'r') as config:
     global Token, hypixelKey, nasaKey
     config_json = json.load(config)
@@ -315,3 +319,4 @@ with open('D:\MelonBot\config.json', 'r') as config:
     nasaKey = config_json["Nasa-Api-Key"][0]
 
 bot.run(Token)
+
