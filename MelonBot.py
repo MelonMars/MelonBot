@@ -1,12 +1,9 @@
-from posix import EX_CONFIG, WIFEXITED
-from sys import setswitchinterval
-from warnings import resetwarnings
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
-from discord import Embed, Game, utils
+from discord import Embed, Game, Member
 
 
 bot = commands.Bot(command_prefix=';')
@@ -309,6 +306,13 @@ async def help(ctx, type=''):
         em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
 
     await ctx.channel.send(embed=em)
+
+@bot.command()
+async def on_member_join(ctx, member: Member):
+    for channel in member.server.channels:
+            if channel.name == 'general' or 'lounge':
+                await bot.send_message(channel, 'Hi!')
+
 
 
 with open('D:\MelonBot\config.json', 'r') as config:
