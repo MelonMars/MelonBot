@@ -6,7 +6,7 @@ from discord import Color as c
 from discord import Embed, Game
 
 
-bot = commands.Bot(command_prefix='m;')
+bot = commands.Bot(command_prefix=';')
 bot.remove_command("help")
 
 def coolWikis():
@@ -37,7 +37,7 @@ async def on_ready():
     print('------')
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
-    await bot.change_presence(activity=Game(name="m;help"))
+    await bot.change_presence(activity=Game(name=";help"))
     print('Custom Status is working')
     print('------')
 
@@ -243,8 +243,9 @@ async def affirmation(ctx):
 
 @bot.command()
 async def randomnumber(ctx):
-    res = requests.get("http://numbersapi.com/random")
-    await ctx.channel.send(res.text)
+   # res = requests.get("http://numbersapi.com/random")
+  #  await ctx.channel.send(res.text)
+    await ctx.channel.send(ctx.author.id)
 
 @bot.command()
 async def number(ctx, n: int):
@@ -285,6 +286,7 @@ async def help(ctx, type=''):
         em.add_field(name="nasa", value="`;nasa`, get a beautiful image and information about it from nasa apod.", inline=True)
         em.add_field(name="quote", value="`;quote`, get a quote.", inline=True)
         em.add_field(name="food", value="`;food`, get a picture of food.", inline=True)
+        em.add_field(name="number", value="`;number <number>`, get info about a number", inline=True)
     if type == "games":
         em = Embed(title="Melon Bot Help: Games", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="free games", value="`;freegame`, use this and get some data about a random free game.", inline=True)
