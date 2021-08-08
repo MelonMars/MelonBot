@@ -308,11 +308,15 @@ async def help(ctx, type=''):
     await ctx.channel.send(embed=em)
 
 @bot.command()
-async def on_member_join(ctx, member: Member):
-    for channel in member.server.channels:
-            if channel.name == 'general' or 'lounge':
-                await bot.send_message(channel, 'Hi!')
-
+async def plane(ctx):
+    res = requests.get("https://en.wikipedia.org/wiki/List_of_aircraft_by_date_and_usage_category")
+    soup = bs(res.text, "html.parser")
+    wikisList = []
+    for link in soup.find_all("a"):
+        url = link.get("href", "")
+        if "/wiki/" in url and not "#" in url and not "Wikipedia:" in url and not "File:" in url and not "wikimedia" in url and not "wikidata" in url:
+            wikisList.append(url)
+    await ctx.channel.send("en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
 
 
 with open('D:\MelonBot\config.json', 'r') as config:
