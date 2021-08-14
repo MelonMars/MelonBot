@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
 from discord import Embed, Game, Member
-
+from discord_slash import SlashCommand
+from slash import MBSlash
 
 bot = commands.Bot(command_prefix=';')
 bot.remove_command("help")
@@ -192,7 +193,7 @@ async def bedwars(ctx, uname: str):
         print(e)
 
 @bot.command()
-async def hypixel(ctx, uname: str):
+async def skywars(ctx, uname: str):
     try:
             uuid = usernameToUUID(uname)
             uuid = json.loads(uuid)
@@ -243,9 +244,8 @@ async def affirmation(ctx):
 
 @bot.command()
 async def randomnumber(ctx):
-   # res = requests.get("http://numbersapi.com/random")
-  #  await ctx.channel.send(res.text)
-    await ctx.channel.send(ctx.author.id)
+    res = requests.get("http://numbersapi.com/random")
+    await ctx.channel.send(res.text)
 
 @bot.command()
 async def number(ctx, n: int):
@@ -304,7 +304,8 @@ async def help(ctx, type=''):
         em.add_field(name="programming joke", value="`;programmingjoke`, get a random programming joke", inline=True)
         em.add_field(name="general joke", value="`;generaljoke`, get a random general joke", inline=True)
         em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
-
+    
+    em.add_field(name="pfp by:", value="brgfx on freepik.com")
     await ctx.channel.send(embed=em)
 
 @bot.command()
@@ -318,6 +319,10 @@ async def plane(ctx):
             wikisList.append(url)
     await ctx.channel.send("en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
 
+@bot.command()
+async def server_id(ctx):
+    await ctx.channel.send(ctx.guild.id)
+
 
 with open('D:\MelonBot\config.json', 'r') as config:
     global Token, hypixelKey, nasaKey
@@ -326,5 +331,13 @@ with open('D:\MelonBot\config.json', 'r') as config:
     hypixelKey = config_json["Hypixel-Api-Key"][0]
     nasaKey = config_json["Nasa-Api-Key"][0]
 
+slash = SlashCommand(bot, sync_commands=True)
+
+@slash.slash(name="test",
+             description="This is just a test command, nothing more.")
+async def test(ctx):
+  await ctx.send(content="Hello World!")
+
 bot.run(Token)
 
+#<a href="https://www.freepik.com/vectors/background">Background vector created by brgfx - www.freepik.com</a>
