@@ -5,7 +5,8 @@ from mtgsdk import Card
 from discord import Color as c
 from discord import Embed, Game, Member
 from discord_slash import SlashCommand
-from slash import MBSlash
+from discord_slash.utils.manage_commands import create_option
+
 
 bot = commands.Bot(command_prefix=';')
 bot.remove_command("help")
@@ -553,7 +554,7 @@ async def magic(ctx):
                     name="n",
                     description="This is the constant",
                     option_type = 4,
-                    requrired=True
+                    required=True
                 )
             ])
 async def e(ctx, n: int):
@@ -660,7 +661,7 @@ async def plane(ctx):
 
 @slash.slash(name="server_id", description="Get your server id!")
 async def server_id(ctx):
-    await ctx.channel.send(ctx.guild.id)
+        await ctx.channel.send(ctx.guild.id)
 
 with open('D:\MelonBot\config.json', 'r') as config:
     global Token, hypixelKey, nasaKey
