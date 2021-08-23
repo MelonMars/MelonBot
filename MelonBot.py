@@ -672,5 +672,3 @@ with open('D:\MelonBot\config.json', 'r') as config:
 
 
 bot.run(Token)
-
-#<a href="https://www.freepik.com/vectors/background">Background vector created by brgfx - www.freepik.com</a>
