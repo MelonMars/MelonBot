@@ -601,7 +601,7 @@ async def iss(ctx):
                     required=False
                 )
             ])
-async def help(ctx, type=''):
+async def help(ctx, type:str=''):
     if type == '':
         em = Embed(title="Melon Bot Help", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="📓wikipedia", value="`;help wikipedia`", inline=True)
