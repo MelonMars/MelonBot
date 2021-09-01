@@ -609,10 +609,12 @@ async def help(ctx, type:str=''):
         em.add_field(name="🎮games", value="`;help games`", inline=True)
         em.add_field(name="🐻animals", value="`;help animals`", inline=True)
         em.add_field(name="😜jokes", value="`;help jokes`", inline=True)
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
     if type == 'wikipedia':
         em = Embed(title="Melon Bot Help: Wikipedia", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="cool wikis", value="`;coolwikis`, get the link to a random wiki.", inline=True)
         em.add_field(name="wikis", value="`;wikis <wiki name>`, search wikipedia for the summary of the wiki you input.", inline=True)
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
         await ctx.channel.send(embed=em)
     if type == 'misc':
         em = Embed(title="Melon Bot Help: Miscellaneous", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
@@ -628,24 +630,27 @@ async def help(ctx, type:str=''):
         em.add_field(name="quote", value="`;quote`, get a quote.", inline=True)
         em.add_field(name="food", value="`;food`, get a picture of food.", inline=True)
         em.add_field(name="number", value="`;number <number>`, get info about a number", inline=True)
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
     if type == "games":
         em = Embed(title="Melon Bot Help: Games", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="free games", value="`;freegame`, use this and get some data about a random free game.", inline=True)
         em.add_field(name="magic", value="`;magic`, get data about a random magic the gathering card.", inline=True)
         em.add_field(name="bedwars", value="`;bedwars <username>`, get bedwars stats from the user you inputted", inline=True)
         em.add_field(name="skywars", value="`;skywars <username>`, get skywars stats from the user you inputted")
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
     if type == "animals":
         em = Embed(title="Melon Bot Help: Animals", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="shibu", value="`;shibu`, get a random shibu inu picture.", inline=True)
         em.add_field(name="fox", value="`;fox`, get a random fox picture.", inline=True)
         em.add_field(name="cat", value="`;cat`, get a random cat picture.", inline=True)
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
     if type == "jokes":
         em = Embed(title="Melon Bot Help: Jokes", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="tronalddump", value="`;tronalddump`, get a stupid trump quote", inline=True)
         em.add_field(name="programming joke", value="`;programmingjoke`, get a random programming joke", inline=True)
         em.add_field(name="general joke", value="`;generaljoke`, get a random general joke", inline=True)
         em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
-    em.add_field(name="pfp by:", value="brgfx on freepik.com")
+        em.add_field(name="pfp by:", value="brgfx on freepik.com")
     await ctx.channel.send(embed=em)
 
 @slash.slash(name="plane", description="get the wikipedia link of a random plane!")
