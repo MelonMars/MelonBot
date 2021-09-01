@@ -393,9 +393,9 @@ async def fox(ctx):
 
 @slash.slash(name="cat", description="Get a random cat image!")
 async def cat(ctx):
-    url = "https://randomfox.ca/floof/"
+    url = "https://api.thecatapi.com/v1/images/search/"
     res = requests.get(url)
-    await ctx.channel.send(res.json()["image"])
+    await ctx.channel.send(res.json()["url"])
 
 @slash.slash(name="food", description="Get a random food image!")
 async def food(ctx): 
