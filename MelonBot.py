@@ -324,7 +324,19 @@ async def plane(ctx):
 async def server_id(ctx):
     await ctx.channel.send(ctx.guild.id)
 
+
+
+
+
+# == SLASH COMMANDS == #
+
 slash = SlashCommand(bot, sync_commands=True)
+
+# == SLASH COMMANDS == #
+
+
+
+
 
 @slash.slash(name="wiki",
             description="This is just a test command, nothing more.",
