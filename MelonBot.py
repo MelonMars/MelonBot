@@ -327,7 +327,7 @@ async def plane(ctx):
         url = link.get("href", "")
         if "/wiki/" in url and not "#" in url and not "Wikipedia:" in url and not "File:" in url and not "wikimedia" in url and not "wikidata" in url:
             wikisList.append(url)
-    await ctx.channel.send("en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
+    await ctx.channel.send("https://www.en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
 
 @bot.command()
 async def server_id(ctx):
@@ -361,7 +361,6 @@ slash = SlashCommand(bot, sync_commands=True)
                 required=True
             )
             ])
-
 async def wiki(ctx, wiki: str):
     try:
         data = wikipedia.WikipediaPage(title = wiki).summary
@@ -688,7 +687,7 @@ async def plane(ctx):
         url = link.get("href", "")
         if "/wiki/" in url and not "#" in url and not "Wikipedia:" in url and not "File:" in url and not "wikimedia" in url and not "wikidata" in url:
             wikisList.append(url)
-    await ctx.channel.send("en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
+    await ctx.channel.send("https://www.en.wikipedia.org" + wikisList[random.randint(0, len(wikisList)-1)])
 
 @slash.slash(name="server_id", description="Get your server id!")
 async def server_id(ctx):
