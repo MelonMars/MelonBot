@@ -1,5 +1,3 @@
-from io import DEFAULT_BUFFER_SIZE
-from typing import Annotated
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
@@ -8,6 +6,7 @@ from discord import Color as c
 from discord import Embed, Game, Member
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
+from PIL import Image
 
 
 bot = commands.Bot(command_prefix=';')
@@ -332,7 +331,6 @@ async def plane(ctx):
 @bot.command()
 async def server_id(ctx):
     await ctx.channel.send(ctx.guild.id)
-
 
 # == SLASH COMMANDS == #
 
