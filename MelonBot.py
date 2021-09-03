@@ -150,10 +150,15 @@ async def tronalddump(ctx):
     await ctx.channel.send("A stupid Trump quote is:" + " " + res.json()["value"])
 
 @bot.command()
-async def insult(ctx):
-    url = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
-    res = requests.get(url)
-    await ctx.channel.send(ctx.author.mention + "," + " " + res.json()["insult"])
+async def insult(ctx, member:Member=None):
+    if member == None:
+        url = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+        res = requests.get(url)
+        await ctx.channel.send(ctx.author.mention + "," + " " + res.json()["insult"])
+    else:
+        url = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+        res = requests.get(url)
+        await ctx.channel.send(member.mention + "," + " " + res.json()["insult"])
 
 @bot.command()
 async def quote(ctx):
@@ -196,6 +201,7 @@ async def bedwars(ctx, uname: str):
             await ctx.channel.send("That is not a valid username")
             print(e)
     await ctx.channel.send("MelonsMars has 30000 kills, and 300 deaths, which makes a total k/d ratio of 100. They have won 5000 times, and lost 50 times, for a win/loss ratio of 100")
+
 @bot.command()
 async def skywars(ctx, uname: str):
     try:
