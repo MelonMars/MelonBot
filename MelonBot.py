@@ -332,6 +332,14 @@ async def plane(ctx):
 async def server_id(ctx):
     await ctx.channel.send(ctx.guild.id)
 
+@bot.command()
+async def ping(ctx):
+    await ctx.send('Pong! {0}'.format(round(bot.latency, 1)))
+    
+
+
+
+
 # == SLASH COMMANDS == #
 
 slash = SlashCommand(bot, sync_commands=True)
