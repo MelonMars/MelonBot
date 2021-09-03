@@ -1,3 +1,5 @@
+from io import DEFAULT_BUFFER_SIZE
+from typing import Annotated
 from discord.ext import commands
 import wikipedia, requests, random, json
 from bs4 import BeautifulSoup as bs
@@ -172,27 +174,28 @@ async def coolwikis(ctx):
 
 @bot.command()
 async def bedwars(ctx, uname: str):
-    try:
-            uuid = usernameToUUID(uname)
-            uuid = json.loads(uuid)
-            uuid = uuid["id"]
-    except:
-        pass
-    statsRaw = getHypixelStats(uuid)
-    try:
-        playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
-        playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
-        playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
-        playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
-        playerLosses = int(playerGames) - int(playerWins)
-        kd = playerKills/playerDeaths
-        wnlRatio = playerWins/playerLosses
-    
-        await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
-    except Exception as e:
-        await ctx.channel.send("That is not a valid username")
-        print(e)
-
+    if uname=="MelonsMars":
+        try:
+                uuid = usernameToUUID(uname)
+                uuid = json.loads(uuid)
+                uuid = uuid["id"]
+        except:
+            pass
+        statsRaw = getHypixelStats(uuid)
+        try:
+            playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
+            playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
+            playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
+            playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
+            playerLosses = int(playerGames) - int(playerWins)
+            kd = playerKills/playerDeaths
+            wnlRatio = playerWins/playerLosses
+        
+            await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
+        except Exception as e:
+            await ctx.channel.send("That is not a valid username")
+            print(e)
+    await ctx.channel.send("MelonsMars has 30000 kills, and 300 deaths, which makes a total k/d ratio of 100. They have won 5000 times, and lost 50 times, for a win/loss ratio of 100")
 @bot.command()
 async def skywars(ctx, uname: str):
     try:
@@ -323,9 +326,6 @@ async def plane(ctx):
 @bot.command()
 async def server_id(ctx):
     await ctx.channel.send(ctx.guild.id)
-
-
-
 
 
 # == SLASH COMMANDS == #
