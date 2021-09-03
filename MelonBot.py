@@ -296,6 +296,7 @@ async def help(ctx, type=''):
         em.add_field(name="quote", value="`;quote`, get a quote.", inline=True)
         em.add_field(name="food", value="`;food`, get a picture of food.", inline=True)
         em.add_field(name="number", value="`;number <number>`, get info about a number", inline=True)
+        em.add_field(name="ping", value="`;ping`, get bot ping", inline=True)
     if type == "games":
         em = Embed(title="Melon Bot Help: Games", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
         em.add_field(name="free games", value="`;freegame`, use this and get some data about a random free game.", inline=True)
@@ -654,6 +655,7 @@ async def help(ctx, type:str=''):
         em.add_field(name="quote", value="`;quote`, get a quote.", inline=True)
         em.add_field(name="food", value="`;food`, get a picture of food.", inline=True)
         em.add_field(name="number", value="`;number <number>`, get info about a number", inline=True)
+        em.add_field(name="ping", value="`;ping`, get bot ping", inline=True)
         em.add_field(name="pfp by:", value="brgfx on freepik.com")
     if type == "games":
         em = Embed(title="Melon Bot Help: Games", color=c.green(), description=f"The help for the information bot, Melon Bot. Thank you for adding me to {ctx.guild.name}!")
@@ -691,6 +693,11 @@ async def plane(ctx):
 @slash.slash(name="server_id", description="Get your server id!")
 async def server_id(ctx):
         await ctx.channel.send(ctx.guild.id)
+
+@slash.slash(name="ping", description="Get bot ping!")
+async def ping(ctx):
+    await ctx.send(f"Pong! The bots latency is {bot.latency}")
+
 
 with open('D:\MelonBot\config.json', 'r') as config:
     global Token, hypixelKey, nasaKey
