@@ -7,7 +7,8 @@ from discord import Embed, Game, Member
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from PIL import Image
-
+import urllib.request
+import re
 
 bot = commands.Bot(command_prefix=';')
 bot.remove_command("help")
@@ -107,7 +108,7 @@ async def cat(ctx):
     await ctx.channel.send(res.json()["image"])
 
 @bot.command()
-async def food(ctx): 
+async def food(ctx):
         url = "https://foodish-api.herokuapp.com/api"
         res = requests.get(url)
         await ctx.channel.send(res.json()["image"])
@@ -194,7 +195,7 @@ async def bedwars(ctx, uname: str):
             playerLosses = int(playerGames) - int(playerWins)
             kd = playerKills/playerDeaths
             wnlRatio = playerWins/playerLosses
-        
+
             await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
         except Exception as e:
             await ctx.channel.send("That is not a valid username")
@@ -209,7 +210,7 @@ async def skywars(ctx, uname: str):
             uuid = uuid["id"]
     except:
         uuid = "none"
-    
+
     statsRaw = getHypixelStats(uuid)
     try:
         playerWins = statsRaw["player"]["stats"]["SkyWars"]["wins"]
@@ -314,7 +315,7 @@ async def help(ctx, type=''):
         em.add_field(name="programming joke", value="`;programmingjoke`, get a random programming joke", inline=True)
         em.add_field(name="general joke", value="`;generaljoke`, get a random general joke", inline=True)
         em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
-    
+
     em.add_field(name="pfp by:", value="brgfx on freepik.com")
     await ctx.channel.send(embed=em)
 
@@ -336,10 +337,22 @@ async def server_id(ctx):
 @bot.command()
 async def ping(ctx):
     await ctx.send(f"Pong! The bots latency is {bot.latency}")
-    
 
+@bot.command()
+async def yt(ctx, song:str="earrape"):
+     import urllib.request
+     import re
 
+     search_keyword=song
+     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keyword)
+     video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+     print("https://www.youtube.com/watch?v=" + video_ids[0])
+     author = ctx.message.author
+    voice_channel = author.voice_channel
+    vc = await client.join_voice_channel(voice_channel)
 
+    player = await vc.create_ytdl_player(url)
+    player.start()
 
 # == SLASH COMMANDS == #
 
@@ -422,17 +435,17 @@ async def cat(ctx):
     await ctx.channel.send(res.json()["url"])
 
 @slash.slash(name="food", description="Get a random food image!")
-async def food(ctx): 
+async def food(ctx):
         url = "https://foodish-api.herokuapp.com/api"
         res = requests.get(url)
         await ctx.channel.send(res.json()["image"])
 
-@slash.slash(name="author", 
+@slash.slash(name="author",
             description="Get data about an author of your choosing",
             options=[
                 create_option(
                     name="author",
-                    description="The author you would like to learn about", 
+                    description="The author you would like to learn about",
                     option_type=3,
                     required = True
                 )
@@ -520,14 +533,14 @@ async def bedwars(ctx, uname: str):
         playerLosses = int(playerGames) - int(playerWins)
         kd = playerKills/playerDeaths
         wnlRatio = playerWins/playerLosses
-    
+
         await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
     except Exception as e:
         await ctx.channel.send("That is not a valid username")
         print(e)
 
 @slash.slash(name="Skywars", description="Get someone's Hypixel skywars stats!",
-            options=[ 
+            options=[
                 create_option(
                     name="uname",
                     description="Minecraft Username",
@@ -542,7 +555,7 @@ async def skywars(ctx, uname: str):
             uuid = uuid["id"]
     except:
         uuid = "none"
-    
+
     statsRaw = getHypixelStats(uuid)
     try:
         playerWins = statsRaw["player"]["stats"]["SkyWars"]["wins"]
@@ -572,8 +585,8 @@ async def magic(ctx):
                 pass
         await ctx.channel.send(result)
 
-@slash.slash(name="e", description="calculate the number e using an equation, with one of the constants being your choosing!", 
-            options=[ 
+@slash.slash(name="e", description="calculate the number e using an equation, with one of the constants being your choosing!",
+            options=[
                 create_option(
                     name="n",
                     description="This is the constant",
@@ -616,12 +629,12 @@ async def iss(ctx):
     lat = res.json()["iss_position"]["latitude"]
     await ctx.channel.send(f"Lat: {lat} \nLong: {long}")
 
-@slash.slash(name="help", description="The default help command of MelonBot", 
+@slash.slash(name="help", description="The default help command of MelonBot",
             options=[
                 create_option(
-                    name="type", 
-                    description="The type of help (not required)", 
-                    option_type=4, 
+                    name="type",
+                    description="The type of help (not required)",
+                    option_type=4,
                     required=False
                 )
             ])
