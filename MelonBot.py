@@ -1,17 +1,16 @@
 from discord.ext import commands
-import wikipedia, requests, random, json
+import wikipedia, requests, random, json, re, youtube_dl, asyncio, discord
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
 from discord import Embed, Game, Member
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
-from PIL import Image
-import urllib.request
-import re
 
 bot = commands.Bot(command_prefix=';')
 bot.remove_command("help")
+
+#COMMANDS
 
 def coolWikis():
     res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
@@ -339,20 +338,44 @@ async def ping(ctx):
     await ctx.send(f"Pong! The bots latency is {bot.latency}")
 
 @bot.command()
-async def yt(ctx, song:str="earrape"):
-     import urllib.request
-     import re
+async def person(ctx):
+    await ctx.channel.send("https://thispersondoesnotexist.com/")
 
-     search_keyword=song
-     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keyword)
-     video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
-     print("https://www.youtube.com/watch?v=" + video_ids[0])
-     author = ctx.message.author
-    voice_channel = author.voice_channel
-    vc = await client.join_voice_channel(voice_channel)
+@bot.command()
+async def meatsum(ctx):
+    res = requests.get("https://baconipsum.com/api/?type=meat-and-filler").text
+    res = res[1:-1]
+    print(res)
+    if len(res) < 2000:
+        print(len(res))
+        await ctx.channel.send(res)
+    else:
+        print(len(res))
+        await ctx.channel.send(res[0:2000])
 
-    player = await vc.create_ytdl_player(url)
-    player.start()
+@bot.command()
+async def avatar(ctx, sprite:str="female", seed="jack", mood:str="happy"):
+    await ctx.channel.send(f"https://avatars.dicebear.com/api/{sprite}/{seed}.svg?mood[]={mood}")
+
+@bot.command()
+async def randomcommit(ctx):
+    await ctx.channel.send(requests.get("http://whatthecommit.com/index.txt").text)
+
+@bot.command()
+async def eight_ball(ctx, q:str):
+    answers = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.", "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Very doubtful."]
+    await ctx.channel.send(answers[random.randint(0, len(answers)-1)])
+
+@bot.command()
+async def dog(ctx):
+    res = requests.get("https://random.dog/woof.json").json()["url"]
+    await ctx.channel.send(res)
+
+@bot.command()
+async def duck(ctx):
+    res = requests.get("https://random-d.uk/api/random").json()["url"]
+    await ctx.channel.send(res)
+
 
 # == SLASH COMMANDS == #
 
@@ -711,12 +734,11 @@ async def ping(ctx):
     await ctx.send(f"Pong! The bots latency is {bot.latency}")
 
 
-with open('D:\MelonBot\config.json', 'r') as config:
-    global Token, hypixelKey, nasaKey
-    config_json = json.load(config)
-    Token = config_json["Token"][0]
-    hypixelKey = config_json["Hypixel-Api-Key"][0]
-    nasaKey = config_json["Nasa-Api-Key"][0]
+config = open("C:\\Users\\molly\\github\\MelonBot\\config.json")
+config_json = json.load(config)
+Token = config_json["Token"][0]
+hypixelKey = config_json["Hypixel-Api-Key"][0]
+nasaKey = config_json["Nasa-Api-Key"][0]
 
 
 bot.run(Token)
