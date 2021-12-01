@@ -384,7 +384,7 @@ slash = SlashCommand(bot, sync_commands=True)
 # == SLASH COMMANDS == #
 
 
-
+"""
 
 
 @slash.slash(name="wiki",
@@ -733,7 +733,7 @@ async def server_id(ctx):
 async def ping(ctx):
     await ctx.send(f"Pong! The bots latency is {bot.latency}")
 
-
+"""
 config = open("C:\\Users\\molly\\github\\MelonBot\\config.json")
 config_json = json.load(config)
 Token = config_json["Token"][0]
