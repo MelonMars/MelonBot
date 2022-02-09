@@ -1,5 +1,5 @@
 from discord.ext import commands
-import wikipedia, requests, random, json, re, youtube_dl, asyncio, discord
+import wikipedia, requests, random, json, discord
 from bs4 import BeautifulSoup as bs
 from mtgsdk import Card
 from discord import Color as c
@@ -376,6 +376,9 @@ async def duck(ctx):
     res = requests.get("https://random-d.uk/api/random").json()["url"]
     await ctx.channel.send(res)
 
+@bot.command()
+async def zebra(ctx):
+    await ctx.channel.send(":zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra::zebra:")
 
 # == SLASH COMMANDS == #
 
@@ -734,7 +737,7 @@ async def ping(ctx):
     await ctx.send(f"Pong! The bots latency is {bot.latency}")
 
 """
-config = open("C:\\Users\\molly\\github\\MelonBot\\config.json")
+config = open("C:\\Users\\Molly\\github\\MelonBot\\config.json")
 config_json = json.load(config)
 Token = config_json["Token"][0]
 hypixelKey = config_json["Hypixel-Api-Key"][0]
