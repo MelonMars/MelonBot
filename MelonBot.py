@@ -12,21 +12,6 @@ bot.remove_command("help")
 
 #COMMANDS
 
-def coolWikis():
-    res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
-    soup = bs(res.text, "html.parser")
-    wikisList = []
-    global badList
-    for link in soup.find_all("a"):
-        url = link.get("href", "")
-        if "/wiki/" in url:
-            wikisList.append(url)
-
-    toSend = wikisList[random.randint(0, len(wikisList))]
-    if toSend.contains('porn') or toSend.contains('sex') or toSend.contains('Fuck') or toSend.contains('swastika'):
-        toSend = "Sorry, but the article the random number generator landed on... is not the most appropriate."
-    return toSend
-
 def usernameToUUID(uname):
     res = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{uname}")
     return(res.text)
@@ -143,7 +128,7 @@ async def freegame(ctx):
     await ctx.channel.send(embed=em)
 
 @bot.command()
-async def tronalddump(ctx):
+async def tronaldump(ctx):
     url = "https://www.tronalddump.io/random/quote"
     res = requests.get(url)
     await ctx.channel.send("A stupid Trump quote is:" + " " + res.json()["value"])
@@ -172,34 +157,33 @@ async def advice(ctx):
     await ctx.channel.send(res.json()["slip"]["advice"])
 
 @bot.command()
-async def coolwikis(ctx):
-    x = coolWikis()
-    await ctx.channel.send("https://en.wikipedia.org/"+x)
+async def coolwiki(ctx):
+    res = requests.get("https://en.wikipedia.org/wiki/Wikipedia:Unusual_articles")
+    soup = bs(res.text, "html.parser")
+    wikisList = []
+    for link in soup.find_all("a"):
+        url = link.get("href", "")
+        if "/wiki/" in url:
+            wikisList.append(url)
+
+    toSend = wikisList[random.randint(0, len(wikisList))]
+    await ctx.channel.send(f"https://www.en.wikipedia.org{toSend}")
 
 @bot.command()
 async def bedwars(ctx, uname: str):
-    if uname=="MelonsMars":
-        try:
-                uuid = usernameToUUID(uname)
-                uuid = json.loads(uuid)
-                uuid = uuid["id"]
-        except:
-            pass
-        statsRaw = getHypixelStats(uuid)
-        try:
-            playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
-            playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
-            playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
-            playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
-            playerLosses = int(playerGames) - int(playerWins)
-            kd = playerKills/playerDeaths
-            wnlRatio = playerWins/playerLosses
+    uuid = usernameToUUID(uname)
+    print(uuid)
+    uuid = json.loads(uuid)["id"]
+    statsRaw = getHypixelStats(uuid)
+    playerKills = statsRaw["player"]["stats"]["Bedwars"]["kills_bedwars"]
+    playerGames = statsRaw["player"]["stats"]["Bedwars"]["games_played_bedwars_1"]
+    playerDeaths = statsRaw["player"]["stats"]["Bedwars"]["deaths_bedwars"]
+    playerWins = statsRaw["player"]["stats"]["Bedwars"]["wins_bedwars"]
+    playerLosses = int(playerGames) - int(playerWins)
+    kd = playerKills/playerDeaths
+    wnlRatio = playerWins/playerLosses
 
-            await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
-        except Exception as e:
-            await ctx.channel.send("That is not a valid username")
-            print(e)
-    await ctx.channel.send("MelonsMars has 30000 kills, and 300 deaths, which makes a total k/d ratio of 100. They have won 5000 times, and lost 50 times, for a win/loss ratio of 100")
+    await ctx.channel.send("{} has {} kills, and {} deaths, which makes a total k/d ratio of {}. They have won {} times, and lost {} times, for a win/loss ratio of {}.".format(uname, playerKills, playerDeaths, kd, playerWins, playerLosses, wnlRatio))
 
 @bot.command()
 async def skywars(ctx, uname: str):
@@ -385,7 +369,6 @@ async def zebra(ctx):
 slash = SlashCommand(bot, sync_commands=True)
 
 # == SLASH COMMANDS == #
-
 
 """
 
