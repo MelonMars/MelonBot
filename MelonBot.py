@@ -298,7 +298,6 @@ async def help(ctx, type=''):
         em.add_field(name="general joke", value="`;generaljoke`, get a random general joke", inline=True)
         em.add_field(name="dad joke", value="`;dadjoke`, get a random dad joke", inline=True)
 
-    em.add_field(name="pfp by:", value="brgfx on freepik.com")
     await ctx.channel.send(embed=em)
 
 @bot.command()
